@@ -2,4 +2,4 @@
 
 ---
 
-Exercises from ~The C Programming Language (Second Edition)~ by Kerrigan and Ritchie.
+Exercises from *The C Programming Language (Second Edition)* by Kerrigan and Ritchie.
