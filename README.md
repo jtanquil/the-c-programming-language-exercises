@@ -1,4 +1,4 @@
-#### The C Programming Language Exercises
+# The C Programming Language Exercises
 
 ---
 
