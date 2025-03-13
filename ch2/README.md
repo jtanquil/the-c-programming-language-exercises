@@ -72,3 +72,30 @@ Names in an `enum` must be distinct, but values don't need to be distinct. `enum
 - **explicit type coercion**: `(type-name) expression` coerces the value of `expression` into `type-name`; this is a unary expression called a cast
   - this can be used to cast arguments passed to functions into a certain type if the function expects that type, but this is unnecessary if the function prototype declares these arguments (as they should); the declaration causes automatic type coercion of any arguments when the function is called
   - without a function prototype, arguments in function calls perform the following type coercions: `char` and `short` become `int`, and `float` becomes `double`
+
+### Bitwise Operations
+
+- `&`: bitwise AND, can turn off bits: `x & 077` flips off all but the rightmost 6 bits of `x`
+- `|`: bitwise inclusive OR, can turn on bits: `x | 077` flips on the rightmost 6 bits of `x`
+- `^`: bitwise XOR, bits in `a ^ b` are `1` if the corresponding bits in `a` and `b` are different and `0` if they're the same
+- `<<`: left shift - `x << n` shifts `x` `n` bits to the left
+  - `n` must be a positive integer
+- `>>`: right shift - `x >> n` shifts `x` `n` bits to the right
+  - if `x` is unsigned, then the vacated bits will be `0`
+  - if `x` is signed, depending on the machine, the vacated bits will be filled with sign bits or 0 bits
+- `~`: unary one's complement; `~x` flips each `1` into a `0` and vice versa
+
+### Aside: Binary Representation of Signed Quantities
+
+- there are several ways to represent signed integers in binary:
+  - **sign-magnitude**: set most significant bit of `x` to `0` if it's positive, `1` if not
+    - issues: this produces multiple representations of 0, arithmetic operations and comparisons are tricky
+  - **one's complement**: represent `-x` with the bitwise complement, `~x`
+    - issues: this still produces multiple representations of 0, addition requires a wrap-around carry operation to work
+  - **two's complement**: represent `-x` via the following procedure:
+    - take the bitwise complement of `x`: `~x`
+    - add 1 to `~x`, ignoring any overflow: `(~x) + 1`
+
+- two's complement representation solves the problems of sign-magnitude and one's complement; there's only one representation of zero, and addition doesn't require wrap-around carry
+
+- assuming that integers have `N` bits of storage, the two's complement representation maps the positive integers `0, ... 2^(N - 1) - 1` to the range `000...0, ..., 01111...1`, and the negative integers `-2^(N - 1), -2(N - 1) + 1, ... , -2, -1` to the range `100...0, ... , 111...1`. In other words, the positive integers are mapped to the first half of the range of possible bit representations, and the negative integers are mapped to the second half.
