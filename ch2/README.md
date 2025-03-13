@@ -72,4 +72,3 @@ Names in an `enum` must be distinct, but values don't need to be distinct. `enum
 - **explicit type coercion**: `(type-name) expression` coerces the value of `expression` into `type-name`; this is a unary expression called a cast
   - this can be used to cast arguments passed to functions into a certain type if the function expects that type, but this is unnecessary if the function prototype declares these arguments (as they should); the declaration causes automatic type coercion of any arguments when the function is called
   - without a function prototype, arguments in function calls perform the following type coercions: `char` and `short` become `int`, and `float` becomes `double`
-
