@@ -99,3 +99,15 @@ Names in an `enum` must be distinct, but values don't need to be distinct. `enum
 - two's complement representation solves the problems of sign-magnitude and one's complement; there's only one representation of zero, and addition doesn't require wrap-around carry
 
 - assuming that integers have `N` bits of storage, the two's complement representation maps the positive integers `0, ... 2^(N - 1) - 1` to the range `000...0, ..., 01111...1`, and the negative integers `-2^(N - 1), -2(N - 1) + 1, ... , -2, -1` to the range `100...0, ... , 111...1`. In other words, the positive integers are mapped to the first half of the range of possible bit representations, and the negative integers are mapped to the second half.
+
+### Ternary Expressions
+
+- `cond ? n_1 : n_2` evaluates to `n_1` if `cond` is true, otherwise `n_2`
+- if `n_1` and `n_2` are different types, then type conversion occurs with the normal rules
+
+### Order of Operations
+
+- except for `&&`, `||`, `?:` or `,`, C doesn't specify the order in which operands are evaluated
+  - some implications of this: expressions involving the return values of functions like `a = f() + g()` can produce different results depending on the order in which the function calls are evaluated (for instance, if the call to `f` alters a value that the call to `g` is dependent on)
+  - the order in which function arguments are evaluated is also implementation-dependent: a function call like `f(n++, n)` can invoke `f` with different values depending on the implementation
+- as in other languages the moral here is to not rely on operator precedence and use parentheses
