@@ -25,7 +25,7 @@ of n + 1 and replacing its ones digit, say j, with the digit j + 1.
 void reverse(char s[]) {
   int temp, i;
 
-  for (i = 0; i < (strlen(s) - 1) / 2; i++) {
+  for (i = 0; i <= (strlen(s) - 1) / 2; i++) {
     temp = s[i];
     s[i] = s[strlen(s) - 1 - i];
     s[strlen(s) - 1 - i] = temp;
