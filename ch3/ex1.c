@@ -2,23 +2,49 @@
 would suffice (at the price of more tests outside). Write a version with only 
 one test inside the loop and measure the difference in run-time. */
 
-[1, 2, 3, 4, 5]
-
 /*
-while (low < high) {
-  mid = (low + high) / 2;
-  (x < v[mid]) ? high = mid - 1 : low = mid + 1;
-}
+  change prototype to (int x, int v[], int low, int high)
+  pass low/high params
 
-return (x == v[mid]) ? mid : -1;
+  first set mid = (low + high) / 2, check if v[mid] == x
+  else, it's not, go into the loop:
+
+  if x < v[mid], then return binsearch(x, v, low, mid - 1)
+  else, return binsearch(x, v, mid + 1, high)
+
+  ...
+
+  return -1
 */
 
-x: 3 (index 2)
-low: 0, 2, 2
-high: 4, 4, 2
-mid: 2, 3
+#include <stdio.h>
 
-x: 4 (index 3)
-low: 0, 2, 3, 3
-high: 4, 4, 4, 4
-mid: 2, 3, 3
+int binsearch(int x, int v[], int low, int high) {
+  int mid;
+
+  mid = (low + high) / 2;
+
+  if (x == v[mid]) {
+    return mid;
+  }
+
+  while(low <= high) {
+    if (x < v[mid]) {
+      return binsearch(x, v, low, mid - 1);
+    } else {
+      return binsearch(x, v, mid + 1, high);
+    }
+  }
+
+  return -1;
+}
+
+void main() {
+  int v[5] = {1, 2, 3, 4, 5};
+  int w[6] = {2, 4, 6, 8, 10, 12};
+
+  printf("%d\n", binsearch(3, v, 0, 4)); // 2
+  printf("%d\n", binsearch(10, w, 0, 5)); // 4
+  printf("%d\n", binsearch(7, w, 0, 5)); // -1
+  printf("%d\n", binsearch(0, v, 0, 4)); // -1
+}
