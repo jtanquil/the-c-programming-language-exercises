@@ -5,10 +5,13 @@
 #define MAXOP 100     /* max size of operator or operand */
 #define NUMBER '0'    /* signal that a number was found */
 
+enum { NOT_VAR, IS_VAR };
+enum { NO_ASSIGNMENT, ASSIGNMENT };
+
 int getop(char []);
 
-void push(double);
-double pop(void);
+void push(double, int);
+double pop(int);
 int get_index(int);
 
 void assign(double, int);
@@ -20,32 +23,33 @@ void assign_last(double);
 // double top(void);
 // void swap(void);
 // void clear(void);
+int top_var(void);
 
 /* reverse Polish calculator */
 int main() {
-  int type;
+  int type, op1var, op2var;
   double op1, op2, result;
   char s[MAXOP];
 
   while ((type = getop(s)) != EOF) {
     switch (type) {
       case NUMBER:
-        push(atof(s));
+        push(atof(s), NOT_VAR);
         break;
       case '+':
-        push(pop() + pop());
+        push(pop(NO_ASSIGNMENT) + pop(NO_ASSIGNMENT), NOT_VAR);
         break;
       case '*':
-        push(pop() * pop());
+        push(pop(NO_ASSIGNMENT) * pop(NO_ASSIGNMENT), NOT_VAR);
         break;
       case '-':
-        op2 = pop();
-        push(pop() - op2);
+        op2 = pop(NO_ASSIGNMENT);
+        push(pop(NO_ASSIGNMENT) - op2, NOT_VAR);
         break;
       case '/':
-        op2 = pop();
+        op2 = pop(NO_ASSIGNMENT);
         if (op2 != 0.0)
-          push(pop() / op2);
+          push(pop(NO_ASSIGNMENT) / op2, NOT_VAR);
         else
           printf("error: zero divisor\n");
         break;
@@ -53,14 +57,14 @@ int main() {
       extend the calculator. Add the modulus (%) operator and provisions for 
       negative numbers. */
       case '%':
-        op2 = pop();
+        op2 = pop(NO_ASSIGNMENT);
         if (op2 != 0.0)
-          push((int) pop() % (int) op2);
+          push((int) pop(NO_ASSIGNMENT) % (int) op2, NOT_VAR);
         else
           printf("error: zero modulus\n");
         break;
       case '\n':
-        result = pop();
+        result = pop(NO_ASSIGNMENT);
         printf("\t%.8g\n", result);
         assign_last(result);
         break;
@@ -82,24 +86,24 @@ int main() {
       //   break;
       /* Exercise 4-5. Add access to library functions like sin, exp and pow. */
       case 'S':
-        push(sin(pop()));
+        push(sin(pop(NO_ASSIGNMENT)), NOT_VAR);
         break;
       case 'C':
-        push(cos(pop()));
+        push(cos(pop(NO_ASSIGNMENT)), NOT_VAR);
         break;
       case 'T':
-        push(tan(pop()));
+        push(tan(pop(NO_ASSIGNMENT)), NOT_VAR);
         break;
       case 'E':
-        push(exp(pop()));
+        push(exp(pop(NO_ASSIGNMENT)), NOT_VAR);
         break;
       case 'P':
-        op2 = pop();
-        op1 = pop();
+        op2 = pop(NO_ASSIGNMENT);
+        op1 = pop(NO_ASSIGNMENT);
         if ((op1 == 0 && op2 <= 0) || (op1 < 0 && rintf(op2) != op2)) {
           printf("error: domain error\n");
         } else {
-          push(pow(op1, op2));
+          push(pow(op1, op2), NOT_VAR);
         }
         break;
       /* Exercise 4-6. Add commands for handling variables. Add a variable 
@@ -114,30 +118,33 @@ int main() {
       case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n':
       case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u':
       case 'v': case 'w': case 'x': case 'y': case 'z':
-        push(get_index(type));
+        push(get_index(type), IS_VAR);
         break;
       case '=':
-        op2 = pop();
-        op1 = pop();
-        printf("%g %g\n", op1, op2);
-        if (op1 < 0 || op1 > 'z' - 'a') {
+        op2var = top_var();
+        op2 = pop(NO_ASSIGNMENT);
+
+        op1var = top_var();
+        op1 = pop(ASSIGNMENT);
+
+        if (!op1var) {
           printf("error: must assign to a variable\n");
           break;
         }
 
-        if (op2 >= 'a' && op2 <= 'z') {
+        if (op2var) {
           assign(get(op2), op1);
-          push(get(op2));
+          push(get(op2), NOT_VAR);
         } else if (op2 == 'L') {
           assign(get_last(), op1);
-          push(get_last());
+          push(get_last(), NOT_VAR);
         } else {
           assign(op2, op1);
-          push(op2);
+          push(op2, NOT_VAR);
         }
         break;
       case 'L':
-        push(get_last());
+        push(get_last(), NOT_VAR);
         break;
       default:
         printf("error: unknown command %s\n", s);

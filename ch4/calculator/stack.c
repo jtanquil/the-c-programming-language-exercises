@@ -2,23 +2,42 @@
 
 #define MAXVAL 100    /* maximum depth of val stack */
 
+enum { NOT_VAR, IS_VAR };
+enum { NO_ASSIGNMENT, ASSIGNMENT };
+
 int sp = 0;           /* next free stack position */
 double val[MAXVAL];   /* value stack */
+int isvar[MAXVAL];    /* stack indicating whether the corresponding element of
+                         val[] represents a variable */
 
-/* push: push f onto value stack */
-void push(double f) {
+int get_index(int);
+double get(int);
+
+/* push: push f onto value stack, and whether or not it represents a variable
+         onto the isvar stack */
+void push(double f, int representsvar) {
   if (sp < MAXVAL) {
-    val[sp++] = f;
+    val[sp] = f;
+    isvar[sp] = representsvar;
+    sp++;
   } else {
     printf("error: stack full, can't push %g\n", f);
   }
 }
 
-/* pop: pop and return top value from stack */
-double pop(void) {
+/* pop: pop and return top value from stack if the corresponding value doesn't
+   represent a variable, and the value of the variable if it is */
+double pop(int poptype) {
   if (sp > 0)
-    return val[--sp];
-  else {
+    if (isvar[--sp] == NOT_VAR) {
+      return val[sp];
+    } else if (isvar[sp] == IS_VAR) {
+      if (poptype == NO_ASSIGNMENT) {
+        return get(val[sp]);
+      } else {
+        return val[sp];
+      }
+    } else {
     printf("error: stack empty\n");
     return 0.0;
   }
@@ -49,12 +68,16 @@ double top(void) {
 /* swap: swaps the top two elements of the stack */
 void swap(void) {
   double temp;
+  int tempvar;
   
   if (sp > 1) {
-    printf("swapping %f at index %d and %f at index %d\n", val[sp - 1], sp - 1, val[sp - 2], sp - 2);
     temp = val[sp - 1];
     val[sp - 1] = val[sp - 2];
     val[sp - 2] = temp;
+
+    tempvar = isvar[sp - 1];
+    isvar[sp - 1] = isvar[sp - 2];
+    isvar[sp - 2] = tempvar;
   } else {
     printf("error: not enough elements in the stack\n");
   }
@@ -64,4 +87,9 @@ void swap(void) {
 void clear(void) {
   printf("clearing the stack\n");
   sp = 0;
+}
+
+/* top_var: returns the end of the variable indicator stack isvar */
+int top_var(void) {
+  return isvar[sp - 1];
 }
