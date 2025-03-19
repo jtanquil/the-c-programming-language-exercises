@@ -5,9 +5,9 @@ for the most recently printed value. */
 
 #define NUM_VARS 26       /* number of possible stored variables */
 
-double vars[NUM_VARS];    /* array that stores variables */
-int used_vars[NUM_VARS];  /* array that tracks which variables are used */
-double last;              /* special variable that tracks the most recently
+static double vars[NUM_VARS];    /* array that stores variables */
+static int used_vars[NUM_VARS];  /* array that tracks which variables are used */
+static double last;              /* special variable that tracks the most recently
                              printed value */
 
 int get_index(int varname) {

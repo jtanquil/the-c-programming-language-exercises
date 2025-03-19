@@ -1,29 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>   /* for atoff() */
 #include <math.h>     /* for sin, exp, pow, etc */
+#include "calc.h"
 
 #define MAXOP 100     /* max size of operator or operand */
-#define NUMBER '0'    /* signal that a number was found */
-
-enum { NOT_VAR, IS_VAR };
-enum { NO_ASSIGNMENT, ASSIGNMENT };
-
-int getop(char []);
-
-void push(double, int);
-double pop(int);
-int get_index(int);
-
-void assign(double, int);
-double get(int);
-double get_last(void);
-void assign_last(double);
-
-// void print(void);
-// double top(void);
-// void swap(void);
-// void clear(void);
-int top_var(void);
 
 /* reverse Polish calculator */
 int main() {

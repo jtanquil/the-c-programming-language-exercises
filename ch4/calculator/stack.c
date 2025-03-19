@@ -1,13 +1,11 @@
 #include <stdio.h>
+#include "calc.h"
 
 #define MAXVAL 100    /* maximum depth of val stack */
 
-enum { NOT_VAR, IS_VAR };
-enum { NO_ASSIGNMENT, ASSIGNMENT };
-
-int sp = 0;           /* next free stack position */
-double val[MAXVAL];   /* value stack */
-int isvar[MAXVAL];    /* stack indicating whether the corresponding element of
+static int sp = 0;           /* next free stack position */
+static double val[MAXVAL];   /* value stack */
+static int isvar[MAXVAL];    /* stack indicating whether the corresponding element of
                          val[] represents a variable */
 
 int get_index(int);
