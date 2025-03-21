@@ -69,33 +69,26 @@ int getfloat(double *pf) {
   *pf *= sign;
 
   /* check for exponent */
-  if (c != 'e' && c != 'E') {
-    ungetch(c);
-    return 1;
-  } else {
+  if (c == 'e' || c == 'E') {
     c = getch();
+  } else {
+    return 1;
   }
 
   /* read the exponent */
-  if (c != '+' && c != '-') {
-    ungetch(c);
-    return 1;
-  } else {
+  if (c == '+' || c == '-') {
     expsign = (c == '-') ? -1 : 1;
     c = getch();
-  }
-
-  if (!isdigit(c)) {
-    ungetch(c);
+  } else if (!isdigit(c)) {
     return 1;
   }
 
-  for (expsign = 0; isdigit(c); c = getch()) {
-    expsign = 10 * expsign + (c - '0');
+  for (exp = 0; isdigit(c); c = getch()) {
+    exp = 10 * exp + (c - '0');
   }
 
-  for (int k = 0; k < expsign; k++) {
-    if (sign < 0) {
+  for (int k = 0; k < exp; k++) {
+    if (expsign < 0) {
       *pf /= 10;
     } else {
       *pf *= 10;
