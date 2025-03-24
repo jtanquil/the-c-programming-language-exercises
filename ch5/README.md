@@ -92,3 +92,37 @@ char *b = "hi";
 
 - the difference between these two definitions is that the array that `a` points to just big enough to hold the sequence of characters and the `\0`: `{"h", "i", "\0"}`. Individual characters in the array can be changed by `a` will always point to the same storage in memory
 - `b` is a pointer that points to the string constant `hi`; `b` can be reassigned to point somewhere else, but the contents of the string that it's pointing to can't be changed
+
+### Pointer Arrays/Pointers to Pointers
+
+`char *s[]` initializes an array of pointers to `char`s; in other words, the elements `s[i]` point to `char` objects and `*s[i]` will retrieve whatever `char` `s[i]` is pointing to
+
+### 2D Arrays
+
+`char s[row][col]` initializes `row` arrays of `char`s of length `col`. 
+
+- equivalently, `s` is a one-dimensional array whose elements point to arrays of size `col` whose elements are `char`s. 
+- when passing a multidimensional array as an argument to a function, the first dimension/subscript (in the above case, `row`) doesn't need to be specified **since `s` is a pointer to an array of columns (or more generally, an array whose elements are arrays of a fixed size, with one fewer dimension):**
+
+```
+/* all valid ways to pass s into f */
+f(char s[row][col]);
+f(char s[][col]);
+f(char (*s)[y]); /* parentheses here because brackets have higher precedence */
+```
+
+### Pointers vs Multidimensional Arrays
+
+The initialization `char *name[10]` allocates 10 pointers and doesn't initialize them; initialization must be done explicitly; but the "rows" of `name` can be of different sizes.
+
+```
+char *name[] = {'illegal month', 'jan', 'feb', 'mar'};
+```
+
+The initialization `char namearr[row][col]` sets aside space for `row` `char`s each with length `col`:
+
+```
+char namearr[][15] = {'illegal month', 'jan', 'feb', 'mar'}
+```
+
+This sets aside a fixed-size location in memory for `namearr[0]`, `namearr[1]` etc (in this case, the size of each is `15`).
