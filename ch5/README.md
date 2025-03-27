@@ -126,3 +126,74 @@ char namearr[][15] = {'illegal month', 'jan', 'feb', 'mar'}
 ```
 
 This sets aside a fixed-size location in memory for `namearr[0]`, `namearr[1]` etc (in this case, the size of each is `15`).
+
+### Command Line Arguments
+
+Pass command line arguments by changing the signature of `main` to take arguments `int argc` and `char *argv`/`char[] argv`. `argc` is the length of `argv` and `argv` contains the command line arguments (`argv[0]` is set to the function name, so the arguments will be in `argv[1]`, ... , `argv[argc - 1]`)
+
+### Pointers to Functions
+
+It is possible to create pointers to functions, which allows them to be passed into other functions as arguments.
+
+```
+void fn1 (int *a) {
+  // ...
+}
+
+// pass a pointer to fn1 into fn2
+fn2((*fn1)(void *));
+```
+
+In the signature of `fn1` in the call to `fn2`, the argument to `fn1`, a pointer to an `int`, is cast as a generic **void pointer**, a pointer that can hold an address of any type and can be cast into any type. Any pointer can be cast as a void pointer and back without any loss of information.
+
+Passing function pointers as arguments can be useful in cases where the caller needs to invoke a different function based on the other arguments passed to it (for instance, passing different comparison functions into a sort function depending on the types of values being sorted), and casting pointers as `void` pointers is also useful in these cases where it is not known ahead of time the signature of the particular function whose pointer is being passed.
+
+- since `*` has lower precedence than `()`, parentheses are needed to indicate a pointer to a function:
+
+```
+void *f();    // function returning a void pointer
+void (*f)();  // pointer to a function returning void
+```
+
+### Reading Complicated Declarations
+
+```
+// idea: go inside out
+char (*(*x())[])();
+
+// x is a function returning a pointer to an array[] of pointers to functions returning char
+
+// x()
+// x is a function...
+
+// (*x())[]
+// ...returning a pointer to an array[]...
+
+// (*(*x())[])
+// ...of pointers...
+
+// (*(*x())[])()
+// ...to functions...
+
+// char (*(*x())[])()
+// ...returning char
+
+char (*(*x[3])())[5]
+
+// x is an array[3] of pointers to functions returning a pointer to an array[5] of char
+
+// x[3]
+// x is an array[3]...
+
+// *x[3]
+// ...of pointers...
+
+// (*x[3])()
+// ...to functions...
+
+// (*(*x[3])())[5]
+// ...returning a pointer to an array[5]...
+
+// char (*(*x[3])())[5]
+// ...of char
+```
