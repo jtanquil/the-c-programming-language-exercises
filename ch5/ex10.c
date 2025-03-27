@@ -17,19 +17,18 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
-#include <errno.h>
 
 #define MAX_OPERANDS 100
 #define NUMBER 0
-
-double atof(char *s);
+#define INVALID_INPUT -1
 
 static double operands[MAX_OPERANDS];
 static int next_op_index = 0;
 
 /* stripped down version of getop */
-int getop (char *s, double *d) {
+int getop (char *s) {
   /* strip whitespace */
   while (*s == ' ' || *s == '\t') {
     s++;
@@ -37,30 +36,62 @@ int getop (char *s, double *d) {
 
   if (*s == '-') {
     if (isdigit(*(s + 1))) {
-      d = atof(s);
       return NUMBER;
-    } else {
-      return *s;
     }
+  }
+
+  if 
+    (*s == '+' || *s == '-' || *s == '*' || *s == '/') {
+      if (*(s + 1) != '\0') {
+        return INVALID_INPUT;
+      } else {
+        return *s;
+      }
+  } else if (!isdigit(*s)) {
+    return *s;
+  } else {
+    return NUMBER;
   }
 }
 
 void main (int argc, char *argv[]) {
-  double number;
+  double op1, op2, res;
   char *c;
-
+  
   while (--argc > 0) {
-    errno = 0;
     c = *++argv;
-    number = atof(c);
 
-    if (errno != 0) {
-      printf("input error: input is not numeric\n");
-    } else if (next_op_index >= MAX_OPERANDS) {
-      printf("input error: too many operands\n");
-    } else {
-      operands[next_op_index] = number;
-      next_op_index++;
-    }
+    switch (getop(c)) {
+      case NUMBER:
+        if (next_op_index >= MAX_OPERANDS) {
+          printf("input error: too many operands\n");
+        } else {
+          operands[next_op_index] = atof(c);
+          next_op_index++;
+        }
+        break;
+      case INVALID_INPUT:
+        printf("input error: arguments must be numbers or operators (+, -, \'*\', /)\n");
+        break;
+      case '+':
+        res = operands[(next_op_index--) - 1] + operands[(next_op_index--) - 1];
+        operands[next_op_index++] = res;
+        break;
+      case '-':
+        op2 = operands[(next_op_index--) - 1];
+        op1 = operands[(next_op_index--) - 1];
+        operands[next_op_index++] = op1 - op2;
+        break;  
+      case '*':
+        res =  operands[(next_op_index--) - 1] * operands[(next_op_index--) - 1];
+        operands[next_op_index++] = res;
+        break;
+      case '/':
+        op2 = operands[(next_op_index--) - 1];
+        op1 = operands[(next_op_index--) - 1];
+        operands[next_op_index++] = op1 / op2;
+        break;
+    }    
   }
+  printf("The result is: %f\n", operands[next_op_index - 1]);
 }
