@@ -17,8 +17,9 @@ int numcmp(char *, char *);
 
 int _getline(char *, int);
 
-void str_lower(char *, char *);
-void str_directory(char *, char *);
+void get_comparison_string(char *, char *, int, int);
+void str_lower(char *);
+void str_directory(char *);
 
 void main (int argc, char *argv[]) {
   int nlines, sort_order;
@@ -90,18 +91,18 @@ void _qsort (void *v[], int sort_order, int lower, int directory, int left, int 
   for (i = left + 1; i <= right; i++) {
     int swap_result;
 
-    if (lower) {
-      char lower_str_i[strlen(v[i])];
-      char lower_str_left[strlen(v[left])];
+    if (lower || directory) {
+      char comparison_str_i[strlen(v[i])];
+      char comparison_str_left[strlen(v[left])];
 
-      str_lower(lower_str_i, v[i]);
-      str_lower(lower_str_left, v[left]);
+      get_comparison_string(comparison_str_i, v[i], lower, directory);
+      get_comparison_string(comparison_str_left, v[left], lower, directory);
 
-      swap_result = sort_order * (*comp)(lower_str_i, lower_str_left);
+      swap_result = sort_order * (*comp)(comparison_str_i, comparison_str_left);
     } else {
       swap_result = sort_order * (*comp)(v[i], v[left]);
     }
-
+    
     if (swap_result < 0)
       swap(v, ++last, i);
   }
@@ -110,28 +111,40 @@ void _qsort (void *v[], int sort_order, int lower, int directory, int left, int 
   _qsort(v, sort_order, lower, directory, last + 1, right, comp);
 }
 
-void str_lower(char * lower, char *str) {
+void get_comparison_string(char *dest, char *source, int lower, int directory) {
+  strncpy(dest, source, strlen(source));
+
+  if (lower) {
+    str_lower(dest);
+  }
+
+  if (directory) {
+    str_directory(dest);
+  }
+}
+
+void str_lower(char * str) {
   int i;
 
   for (i = 0; i < strlen(str); i++) {
-    lower[i] = tolower(str[i]);
+    str[i] = tolower(str[i]);
   }
 
-  lower[i] = '\0';
+  str[i] == '\0';
 }
 
-void str_directory(char *directory_str, char *str) {
+void str_directory(char *str) {
   int i, j;
 
   // strip everything that isn't a blank, a number or a character
   for (i = 0, j = 0; i < strlen(str); i++) {
     if ((tolower(str[i]) >= 'a' && tolower(str[i]) <= 'z') || (str[i] >= '0' && str[i] <= '9') || str[i] == ' ') {
-      directory_str[j] = str[i];
+      str[j] = str[i];
       j++;
     }
   }
 
-  directory_str[j] = '\0';
+  str[j] = '\0';
 }
 
 int numcmp (char *s1, char *s2) {
