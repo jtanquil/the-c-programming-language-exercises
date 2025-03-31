@@ -24,7 +24,6 @@
     char p[MAXLINELENGTH];
 
     if ((nlines = readlines(lineptr, p, p, MAXLINES)) >= 0) {
-      writelines(lineptr, nlines);
       qsort(lineptr, 0, nlines - 1);
       writelines(lineptr, nlines);
       return 0;
@@ -55,7 +54,7 @@
     nlines = 0;
     while ((len = _getline(line, MAXLEN)) > 0)
       if (nlines >= maxlines ||  p - pstart > MAXLINELENGTH)
-        return -1;
+        return nlines;
       else {
         line[len - 1] = '\0';
         strcpy(p, line);
@@ -69,7 +68,7 @@
     int i;
 
     for (i = 0; i < nlines; i++) {
-      printf("%s\n", i, lineptr[i]);
+      printf("%s\n", lineptr[i]);
     }
   }
 
